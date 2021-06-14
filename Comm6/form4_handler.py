@@ -8,7 +8,7 @@ def my_form():
     row1 = list(x.split(' '))
     row2 = list(y.split(' '))
     #return "Thanks! The answer will be sent to the mail %s" % avGrwthTemp(row)
-    return avGrwthTempC(row1)
+    return a2(row1,row2)
 
 #Средний уровень ряда 
 def avRowLvl(list):
@@ -147,31 +147,47 @@ def GrwthRateB(list):
 def summ(list):
     summ = 0
     for i in range(len(list)):
-        summ+=list[i]
+        summ+=int(list[i])
 
 #Сумма X*I
 def mult(lista, listb):
     m = 0
-    for i in range(len(list)):
-        m += lista[i]*listb[i]
+    for i in range(len(lista)):
+        m += float(lista[i])*float(listb[i])
 
 #Сумма x^2
 def sum2(list):
     sum = 0
     for i in range (len(list)):
-        sum += math.pow(list[i],2)
+        sum += math.pow(float(list[i]),2)
 
-#Коэффициент а1
+#Коэффициент а2
 def a2(lista, listb):
-    a2 = (summ(row2)*summ(row1)-len(list)*mult(row1,row2))/(mat.pow(sum(row1),2)-len(list)*sum2(row1))
-    return a1
+    a2 = (summ(listb)*summ(lista)-len(list)*mult(lista,listb))/(mat.pow(sum(lista),2)-len(list)*sum2(lista))
+    return a2
 
 #Коэффициент а1
 def a1(lista,listb):
-    a1 =(summ(row2)-a2(row1,row2)*summ(row1))/len(lista)
-
+    a1 =(summ(lista)-a2(lista,listb)*summ(lista))/len(lista)
+    return a1
 
 #Среднеквадратичное отклонение
+def sqro(lista, listb):
+    y = 0.0
+    y2 = 0.0
+    summ = 0
+    for i in range(len(lista)):
+        y = a1(lista,listb) + a2(lista,listb)*float(lista[i])
+        y2 = math.pow((float(listb[i])-y),2)
+        summ += y
+    sqro = math.pow((summ-(len(list)-2)),1/2)
+
+#Колеблемость
+def vol(lista,listb):
+    vol = (sqro(lista, listb)/avRowLvl(listb))*100
+    print ('Колеблемость ряда = %a ' %a (vol), end = '\n')
+
+
 
 
 
