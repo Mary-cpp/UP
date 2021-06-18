@@ -1,14 +1,38 @@
-from bottle import post, request
+from bottle import post, request, template
 import math
+from datetime import datetime
 
 @post('/time_series', method='post')
 def my_form():
-    x = request.forms.get('X')
-    y = request.forms.get('Y')
-    row1 = list(x.split(' '))
-    row2 = list(y.split(' '))
-    #return "Thanks! The answer will be sent to the mail %s" % avGrwthTemp(row)
-    return a2(row1,row2)
+    row1 = request.forms.get('X')
+    row2 = request.forms.get('Y')
+    x = []
+    y = []
+    x1 = list(row1.split(' '))
+    y1 = list(row2.split(' '))
+    #рассчет показателей ряда
+    avRowLvlX = avRowLvl(x1)
+    avRowLvlY = avRowLvl(y1)
+    abtcX = AbsGrwthTempC(x1)
+    abtcY = AbsGrwthTempC(y1)
+    abtbX = AbsGrwthTempB(x1)
+    abtbY = AbsGrwthTempB(y1)
+    aagX = avAbsGrowth(x1)
+    aagY = avAbsGrowth(y1)
+    gtbX = GrwthTempC(x1)
+    gtbY = GrwthTempC(y1)
+    gtcX = GrwthTempB(x1)
+    gtcY = GrwthTempB(y1)
+    agtbX = avGrwthTempB(x1)
+    agtbY = avGrwthTempB(y1)
+    agtcX = avGrwthTempC(x1)
+    agtcY = avGrwthTempC(y1)
+    for i in range(len(x1)):
+        x.append(x1[i])
+        y.append(y1[i])
+    #Заносим все параметры в массив, для вывода на страницу сайта
+    arr = (x, y, avRowLvlX, avRowLvlY, abtcX, abtcY, abtbX, abtbY, aagX, aagY, gtbX, gtbY, gtcX, gtcY, agtbX, agtbY, agtcX, agtcY)
+    return template('task4.tpl', title='Time Series', year=datetime.now(), title2 ='Enter the number series', message = 'Task Statement:', output = arr)
 
 #Средний уровень ряда 
 def avRowLvl(list):
@@ -35,46 +59,61 @@ def avAbsGrowth(list):
 #Абсолютный прирост цепной
 def AbsGrwthTempC(list):
     count = 0
+    agtc = []
     for i in range(len(list)):
         if i == 0:
             count = 0
+            agtc.append(count)
         else:
             count = int(list[i])-int(list[i-1])
+            agtc.append(count)
             print('Abcolute Chain Increment[%a]: %a' % (i,count) , end='\n')
+    return agtc
 
 #Абсолютный прирост базисный
 def AbsGrwthTempB(list):
     count = 0
+    agtb = []
     for i in range(len(list)):
         if i == 0:
             count = 0
+            agtb.append(count)
         else:
             count = int(list[i])-int(list[0])
+            agtb.append(count)
             print('Abcolute Basis Increment[%a]: %a' % (i,count) , end='\n')
+    return agtb
 
 #Темп роста базисный
 def GrwthTempB(list):
     count = 0
+    gtb = []
     for i in range(len(list)):
         if i == 0:
             count = 1*100
+            gtb.append(count)
             print('Basis Increment[%a]: %a ' % (i+1,count) , end='\n')
         else:
             count = (int(list[i])/int(list[0]))*100
-            #ДОБАВИТЬ ПРОЦЕНТЫ!!!
+            gtb.append(count)
             print('Basis Increment[%a]: %a ' % (i+1,count) , end='\n')
+    return gtb
 
 #Темп роста цепной
-def AbsGrwthTempC(list):
+def GrwthTempC(list):
     count = 0
+    gtc = []
     for i in range(len(list)):
         if i == 0:
             count = 1
+            gtc.append(count)
             print('Chain Increment[%a]: %a' % (i+1,count) , end='\n')
         else:
             count = int(list[i])/int(list[i-1])*100
+            gtc.append(count)
             #ДОБАВИТЬ ПРОЦЕНТЫ!!!!
             print('Chain Increment[%a]: %a' % (i+1,count) , end='\n')
+    return gtc
 
 #Средний темп роста базисный
 def avGrwthTempB(list):
@@ -93,6 +132,7 @@ def avGrwthTempB(list):
             k+=1
     agtb1 = pow(agtb,1.0/k)
     print("Average Growth Basis Temp = ", agtb1  , end='\n')
+    return agtb1
 
 #Средний темп роста цепной
 def avGrwthTempC(list):
@@ -111,6 +151,7 @@ def avGrwthTempC(list):
             k+=1
     agtb1 = pow(agtb,1.0/k)
     print("Average Growth Basis Temp = ", agtb1  , end='\n')
+    return agtb1
 
 #Темп прироста цепной
 def GrwthRateC(list):
@@ -148,28 +189,29 @@ def summ(list):
     summ = 0
     for i in range(len(list)):
         summ+=int(list[i])
+    print ('Summ of th row = %a' %(summ), end='\n')
 
 #Сумма X*I
 def mult(lista, listb):
     m = 0
     for i in range(len(lista)):
         m += float(lista[i])*float(listb[i])
+    print ('Result of the rows X & Y multiplication = %a' %(m), end='\n')
 
 #Сумма x^2
 def sum2(list):
     sum = 0
     for i in range (len(list)):
         sum += math.pow(float(list[i]),2)
+    print ('squared summ of th row = %a' %(sum), end='\n')
 
 #Коэффициент а2
 def a2(lista, listb):
     a2 = (summ(listb)*summ(lista)-len(list)*mult(lista,listb))/(mat.pow(sum(lista),2)-len(list)*sum2(lista))
-    return a2
 
 #Коэффициент а1
 def a1(lista,listb):
     a1 =(summ(lista)-a2(lista,listb)*summ(lista))/len(lista)
-    return a1
 
 #Среднеквадратичное отклонение
 def sqro(lista, listb):

@@ -36,17 +36,13 @@ def about():
 
 @route('/task4')
 @view('task4')
-def Task4():
+def Task4(output=[]):
     """Renders the Task4 page."""
     return dict(
         title='Time series',
         title2='Enter the number series',
         message='Task statement:',
-        coefficients='',
-        determinism='',
-        row=0,
-        x=[],
-        y=[],
+        output = output,
         year=datetime.now().year
     )
 
