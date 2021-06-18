@@ -18,8 +18,6 @@
 % if output:
 % x = [*output[0]]
 % y = [*output[1]]
-% lvlX = [*output[2]]
-% lvlY = [*output[3]]
 
 <table border = "2">
     <tbody>
@@ -38,9 +36,4 @@
     </table>
 </div>
 
-<h4>Average row X level<h4>
-<p>lvlX</p>
-
-<h4>Average row Y level<h4>
-<p>lvlY</p>
 
